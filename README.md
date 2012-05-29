@@ -7,3 +7,9 @@ The output will print all the words in the first file, the closest word found in
 
 ### readability-of
 Call this script on a piece of text to print out statistics like average sentence length or the Flesch-Kincaid grade level.
+
+### classify-new-words
+Call this script with some text or files to tell your vocabulary chest which words you already know.
+
+### percentage-known-of
+This script will tell you how many words you already know from the given text or file.
