@@ -13,3 +13,7 @@ Call this script with some text or files to tell your vocabulary chest which wor
 
 ### percentage-known-of
 This script will tell you how many words you already know from the given text or file.
+
+
+# Pre-requisites
+* The ruby-stemmer gem: https://github.com/aurelian/ruby-stemmer

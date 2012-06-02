@@ -1,6 +1,6 @@
 require 'fileutils.rb'
 require 'rubygems'
-require 'fast_stemmer'
+require 'lingua/stemmer'
 
 ROOT_DIR = File.expand_path("~/.vocabulary-chest")
 KNOWN_FILE = "#{ROOT_DIR}/known"
@@ -15,6 +15,7 @@ module VocabularyChest
 	@unknown_file = File.open(UNKNOWN_FILE,'a')
 	@known_words = nil
 	@unknown_words = nil
+	@stemmer= Lingua::Stemmer.new(:language => "de")
 
 	at_exit {@known_file.close}
 	at_exit {@unknown_file.close}
@@ -28,26 +29,26 @@ module VocabularyChest
 	end
 
 	def self.add_to_known_words word
-		@known_file.puts(sanitize word)
+		@known_file.puts(stem word)
 		@known_file.flush
 	end
 
 	def self.add_to_unknown_words word
-		@unknown_file.puts(sanitize word)
+		@unknown_file.puts(stem word)
 		@unknown_file.flush
 	end
 
 	def self.contains? word
-		sanitized_word = sanitize word
-		known_words.include?(sanitized_word) or unknown_words.include?(sanitized_word)
+		stemmed_word = stem word
+		known_words.include?(stemmed_word) or unknown_words.include?(stemmed_word)
 	end
 
 	def self.is_known? word
-		known_words.include?(sanitize(word))
+		known_words.include?(stem(word))
 	end
 
-	def self.sanitize word
-		word.gsub(/[,\"\.:()?!]/,"").stem.downcase
+	def self.stem word
+		@stemmer.stem(word.gsub(/[,\"\.:()?!]/,"")).downcase
 	end
 end
 

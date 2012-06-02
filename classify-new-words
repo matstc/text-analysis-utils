@@ -26,20 +26,25 @@ def ask word, index, words
 		answer
 end
 
+def collect_words_from textual_words
+	textual_words.reject!{|w|VocabularyChest::is_known?(w)}
+	textual_words.reject!{|w|VocabularyChest::contains?(w)} if @@options.include? "-n"
+
+	words_by_stem = textual_words.inject({}){|hash, w| hash[VocabularyChest::stem w] = w; hash}
+	words_by_stem.reject!{|s,w| (s =~ /^[-\d\s,\.]*$/) == 0}
+
+	words_by_stem.values
+end
+
 if __FILE__ == $0
 	@@options = ARGV.select{|arg| ["-n"].include? arg}
 	ARGV.reject!{|arg| @@options.include? arg}
 
 	text = get_text
-	words = text.split(" ").collect{|w| w.chomp}
+	textual_words = text.split(" ").collect{|w| w.chomp}
 	puts "Thanks. Please wait..."
 
-	words.reject!{|w|VocabularyChest::is_known?(w)}
-	words.reject!{|w|VocabularyChest::contains?(w)} if @@options.include? "-n"
-	#words.map!{|w| VocabularyChest::sanitize(w)}
-	#words.uniq!
-	words.reject!{|w| (w =~ /^[-\d\s,\.]*$/) == 0}
-
+	words = collect_words_from textual_words
 	words.each_with_index {|word, index|
     answer = ask word, index, words
 		VocabularyChest::add_to_known_words(word) if answer == 'y'
