@@ -4,83 +4,109 @@ require File.join(File.dirname(__FILE__), 'document-cache' )
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
 require 'rubygems'
 require 'amatch'
+require 'colorize'
 
-def pick_choices_for word, words
-	others = words.reject{|w| w == word}
-	choices = (others.shuffle[0,4] + [word])
-	choices.shuffle
-end
+class Game
+	def initialize
+		@failures = 0
+		@turn = 0
+	end
 
-@failures = 0
-@turn = 0
-def hit_rate
-	rate = 100 - @failures / @turn.to_f * 100
-	rate > 0 ? rate : 0
-end
+	def pick_choices_for word, words
+		others = words.reject{|w| w == word}
+		choices = (others.shuffle[0,4] + [word])
+		choices.shuffle
+	end
 
-def deumlaut w
-	w.gsub("ä", "ae").gsub("ö", "oe").gsub("ü", "ue")
-end
+	def hit_rate
+		rate = 100 - @failures / @turn.to_f * 100
+		rate >= 0 ? rate : 0
+	end
 
-def same one, other
-	Amatch::Levenshtein.new(deumlaut(one).downcase).match(deumlaut(other).downcase) <= 1
-end
+	def deumlaut w
+		w.gsub("ä", "ae").gsub("ö", "oe").gsub("ü", "ue")
+	end
 
-def play words
-	words.shuffle.each{|word|
-		matches = DocumentCache.find_examples_for(word, 10)
-		if matches.empty?
-			puts "Sorry. We do not find an example for: #{word}."
-			next
-		end
-		match = matches.sort{|a, b| a.size <=> b.size}.first
-		stemmed_match = VocabularyChest::stem(word)
-		sentence_tokens = match.split(" ").map{|w| if VocabularyChest::stem(w) == stemmed_match; "______"; else; w; end}
+	def same one, other
+		Amatch::Levenshtein.new(deumlaut(one).downcase).match(deumlaut(other).downcase) <= 1
+	end
 
-		puts
-		puts "------------------------------------------------------------"
-		puts "Hit rate: #{'%i' % hit_rate}%"
-		puts "------------------------------------------------------------"
-		puts
-		puts sentence_tokens.join(" ")
-		puts 
-		puts "Choices: [ #{pick_choices_for(word, words).join(" - ")} ]"
-		puts
-
+	def get_an_answer_for word
 		STDOUT.write("> ")
 		answer = STDIN.gets.chomp
 		while answer != '?' and not same(answer, word)
 			@failures += 1
-			puts "Nope. Try again."
+			puts "Nope. Try again.".red
 			STDOUT.write("> ")
 			answer = STDIN.gets.chomp
 		end
 
-		if answer == '?'
-			@failures += 1
-			puts
-			puts "The answer was: #{word}."
-			sleep 1
-		end
+		answer
+	end
 
-		yield
-		@turn += 1
+	def show_question_for word, sentence, words
+		stemmed_match = VocabularyChest::stem(word)
+		sentence_tokens = sentence.split(" ").map{|w| if VocabularyChest::stem(w) == stemmed_match; "______"; else; w; end}
+
+		puts
+		puts
+		puts
+		puts "Turn #{@turn}".blue
+		puts "#{words.size} words".blue
+		color = hit_rate < 75 ? :red : 'green'
+		puts "Hit rate: #{'%i' % hit_rate}%".send(color)
+		puts "------------------------------------------------------------".blue
+		puts
+		puts sentence_tokens.join(" ")
+		puts 
+		puts "Choices: [".blue + " #{pick_choices_for(word, words).join(" - ")} " + "]".blue
+		puts
+	end
+
+	def play words, &block
+		words.shuffle.each{|word|
+			@turn += 1
+
+			matches = DocumentCache.find_examples_for(word, 10)
+			if matches.empty?
+				puts "Sorry. We do not find an example for: #{word}."
+				next
+			end
+
+			sentence = matches.sort{|a, b| a.size <=> b.size}.first
+			show_question_for(word, sentence, words)
+
+			if get_an_answer_for(word) == '?'
+				@failures += 1
+				puts
+				puts "The answer was: #{word}."
+				sleep 1
+			end
+
+			yield(@turn, hit_rate)
+		}
+
+		play(words, &block)
+	end
+end
+
+if __FILE__ == $0
+	def get_input
+		if !ARGV.empty?
+			File.open(ARGV[0]){|f| f.read}
+		else
+			STDIN.read
+		end
+	end
+
+	input = get_input
+	words = input.split("\n")
+	words.reject!{|w| DocumentCache.find_examples_for(w).empty?}
+
+	Game.new.play(words){|turn, hit_rate|
+		if turn > words.size and (hit_rate > 95)
+			puts "Congratulations. Here is a star for you: *"
+			exit(0)
+		end
 	}
 end
-
-def get_input
-	if !ARGV.empty?
-		File.open(ARGV[0]){|f| f.read}
-	else
-		STDIN.read
-	end
-end
-
-input = get_input
-words = input.split("\n")
-play(words){
-	if @turn > words.size and (hit_rate > 95)
-		puts "Congratulations. Here is a star for you: *"
-		exit(0)
-	end
-} while true
