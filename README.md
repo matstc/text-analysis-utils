@@ -14,6 +14,8 @@ Call this script with some text or files to tell your vocabulary chest which wor
 ### percentage-known-of
 This script will tell you how many words you already know from the given text or file.
 
+### cache-document
+This script will store whatever text is given to it in the document cache.
 
-# Pre-requisites
-* The ruby-stemmer gem: https://github.com/aurelian/ruby-stemmer
+### play-with-examples
+This scripts accepts a list of words to practice and will prompt the user to complete sentences taken from the document cache.

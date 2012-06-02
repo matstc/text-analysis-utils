@@ -1,0 +1,15 @@
+GEM
+  specs:
+    amatch (0.2.10)
+      tins (~> 0.3)
+    colorize (0.5.8)
+    ruby-stemmer (0.9.3)
+    tins (0.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  amatch
+  colorize
+  ruby-stemmer
