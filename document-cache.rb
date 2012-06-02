@@ -23,7 +23,10 @@ module DocumentCache
 				contents = file.read
 				sentences = contents.split(/[\.?!\n]/)
 				token = VocabularyChest::stem(text)
-				matches += sentences.select{|s| (s =~ /\b#{Regexp.escape(token)}/i) != nil }
+				matches += sentences.select{|s| 
+					words = s.split(" ")
+					words.find{|w| VocabularyChest::stem(w) == token} != nil 
+				}
 
 				matches = matches[0,count] if matches.size > count
 				return clean(matches) if matches.size == count

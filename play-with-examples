@@ -2,11 +2,28 @@
 
 require File.join(File.dirname(__FILE__), 'document-cache' )
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+require 'rubygems'
+require 'amatch'
 
 def pick_choices_for word, words
 	others = words.reject{|w| w == word}
 	choices = (others.shuffle[0,4] + [word])
-	choices.shuffle.map{|w| VocabularyChest::stem(w)}
+	choices.shuffle
+end
+
+@failures = 0
+@turn = 0
+def hit_rate
+	rate = 100 - @failures / @turn.to_f * 100
+	rate > 0 ? rate : 0
+end
+
+def deumlaut w
+	w.gsub("ä", "ae").gsub("ö", "oe").gsub("ü", "ue")
+end
+
+def same one, other
+	Amatch::Levenshtein.new(deumlaut(one)).match(deumlaut(other)) <= 1
 end
 
 def play words
@@ -18,31 +35,36 @@ def play words
 		end
 		match = matches.sort{|a, b| a.size <=> b.size}.first
 		stemmed_match = VocabularyChest::stem(word)
+		sentence_tokens = match.split(" ").map{|w| if VocabularyChest::stem(w) == stemmed_match; "______"; else; w; end}
 
-		puts "------------------------------------------------------------"
-		puts "Example sentence:"
 		puts
-		puts match.gsub(/\b#{Regexp.escape(stemmed_match)}/i, "_________")
-		puts 
+		puts "------------------------------------------------------------"
+		puts "Hit rate: #{'%i' % hit_rate}%"
+		puts "------------------------------------------------------------"
+		puts
+		puts sentence_tokens.join(" ")
 		puts 
 		puts "Choices: [ #{pick_choices_for(word, words).join(" - ")} ]"
 		puts
 
 		STDOUT.write("> ")
 		answer = STDIN.gets.chomp
-		while answer != '?' and (answer =~ /#{Regexp.escape(stemmed_match)}/i) == nil
+		while answer != '?' and not same(answer, word)
+			@failures += 1
 			puts "Nope. Try again."
-			puts
 			STDOUT.write("> ")
 			answer = STDIN.gets.chomp
 		end
 
 		if answer == '?'
+			@failures += 1
 			puts
-			puts "The answer was: #{stemmed_match}."
-			puts
+			puts "The answer was: #{word}."
 			sleep 1
 		end
+
+		yield
+		@turn += 1
 	}
 end
 
@@ -56,4 +78,9 @@ end
 
 input = get_input
 words = input.split("\n")
-play(words) while true
+play(words){
+	if @turn > words.size and (hit_rate > 95)
+		puts "Congratulations. Here is a star for you: *"
+		exit(0)
+	end
+} while true
