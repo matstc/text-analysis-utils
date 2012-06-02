@@ -1,1 +1,53 @@
-/home/matt/scripts/classify-new-words
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
+def get_text
+	if !ARGV.empty?
+		text = ""
+		ARGV.each {|filename|
+			text += File.open(filename, 'r'){|file| file.read}
+		}
+		text
+	else
+		STDIN.read
+	end
+end
+
+def ask word, index, words
+		answer = ''
+		while !['y','n'].include?(answer)
+			puts 
+			puts "- #{VocabularyChest::sanitize word}"
+			puts "> Do you know this word? [y or n] (#{index + 1} of #{words.size})"
+
+			answer = STDIN.gets.gsub(/[\r\n]/, '')
+		end
+		answer
+end
+
+if __FILE__ == $0
+	@@options = ARGV.select{|arg| ["-n"].include? arg}
+	ARGV.reject!{|arg| @@options.include? arg}
+
+	text = get_text
+	words = text.split(" ").collect{|w| w.chomp}
+	puts "Thanks. Please wait..."
+
+	known_words = VocabularyChest::known_words
+	unknown_words = VocabularyChest::unknown_words
+
+	words.reject!{|w|VocabularyChest::is_known?(w)}
+	words.reject!{|w|VocabularyChest::contains?(w)} if @@options.include? "-n"
+	words.map!{|w| VocabularyChest::sanitize(w)}
+	words.uniq!
+	words.reject!{|w| (w =~ /^[-\d\s,\.]*$/) == 0}
+
+	words.each_with_index {|word, index|
+    answer = ask word, index, words
+		VocabularyChest::add_to_known_words(word) if answer == 'y'
+		VocabularyChest::add_to_unknown_words(word) if answer == 'n'
+	}
+
+	puts "Done."
+end

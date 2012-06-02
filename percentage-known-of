@@ -1,1 +1,28 @@
-/home/matt/scripts/percentage-known-of
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
+def analyse text
+	words = text.split(" ")
+	known = words.select{|w| VocabularyChest.is_known? w}
+	return [words.size, known.size.to_f / words.size * 100]
+end
+
+def output options
+	puts "Total number of words: #{options[0]}"
+	puts "Percentage of words known: #{options[1].to_i}%"
+end
+
+if __FILE__ == $0
+	if !ARGV.empty?
+		ARGV.each {|filename|
+			text = File.open(filename,'r'){|file| file.read}
+			puts "#{filename}:"
+			output(analyse(text))
+		}
+	else
+		text = STDIN.read
+		output(analyse(text))
+	end
+end
+

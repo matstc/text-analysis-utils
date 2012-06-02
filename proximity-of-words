@@ -1,1 +1,46 @@
-/home/matt/scripts/proximity-of-words
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'amatch'
+
+def distance w1, w2
+	Amatch::Levenshtein.new(w1).match(w2)
+end
+
+def analyse text, known_text
+	words = words_of(text)
+	known_words = words_of(known_text)
+
+	words.map {|w|
+		closest_word, proximity = find_closest_word(w, known_words)
+		puts "#{w}\t#{closest_word}\t#{proximity}"
+		STDOUT.flush
+	}
+end
+
+def find_closest_word word, known_words
+	closest_word = known_words.sort{|w1, w2| distance(w1, word) <=> distance(w2, word)}.first
+
+	[closest_word, distance(closest_word, word)]
+end
+
+def words_of text
+	words = text.split(" ").uniq
+end
+
+if __FILE__ == $0
+	if ARGV.size < 2
+		puts "usage: ./script <new text> <known text>"
+		exit 1
+	end
+
+	filename = ARGV.shift
+	text = File.open(filename,'r'){|file| file.read}
+
+	known_text ||= ""
+	ARGV.each {|filename|
+		known_text += File.open(filename,'r'){|file| file.read}
+	}
+
+	analyse text, known_text
+end
