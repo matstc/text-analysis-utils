@@ -2,14 +2,14 @@
 
 require File.join(File.dirname(__FILE__), 'document-cache' )
 
-hide = false
-
-if ARGV.include? "--hide"
-	hide = true
-	ARGV.reject!{|a| a == "--hide"}
+count = 1
+count_param = ARGV.find{|a| (a =~ /--\d*/) == 0}
+if !count_param.nil?
+	count = count_param.sub("--","").to_i
+	ARGV.reject!{|a| a == count_param}
 end
 
 search = ARGV.join(" ")
-match = DocumentCache.find_examples_for search, 1, hide
-exit(1) if match.nil?
-puts match
+matches = DocumentCache.find_examples_for search, count
+exit(1) if matches.empty?
+puts matches.join("\n--\n")

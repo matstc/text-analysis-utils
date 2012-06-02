@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'document-cache' )
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
+def pick_choices_for word, words
+	others = words.reject{|w| w == word}
+	choices = (others.shuffle[0,4] + [word])
+	choices.shuffle.map{|w| VocabularyChest::stem(w)}
+end
+
+def play words
+	words.shuffle.each{|word|
+		matches = DocumentCache.find_examples_for(word, 10)
+		if matches.empty?
+			puts "Sorry. We do not find an example for: #{word}."
+			next
+		end
+		match = matches.sort{|a, b| a.size <=> b.size}.first
+		stemmed_match = VocabularyChest::stem(word)
+
+		puts "------------------------------------------------------------"
+		puts "Example sentence:"
+		puts
+		puts match.gsub(/\b#{Regexp.escape(stemmed_match)}/i, "_________")
+		puts 
+		puts 
+		puts "Choices: [ #{pick_choices_for(word, words).join(" - ")} ]"
+		puts
+
+		STDOUT.write("> ")
+		answer = STDIN.gets.chomp
+		while answer != '?' and (answer =~ /#{Regexp.escape(stemmed_match)}/i) == nil
+			puts "Nope. Try again."
+			puts
+			STDOUT.write("> ")
+			answer = STDIN.gets.chomp
+		end
+
+		if answer == '?'
+			puts
+			puts "The answer was: #{stemmed_match}."
+			puts
+			sleep 1
+		end
+	}
+end
+
+def get_input
+	if !ARGV.empty?
+		File.open(ARGV[0]){|f| f.read}
+	else
+		STDIN.read
+	end
+end
+
+input = get_input
+words = input.split("\n")
+play(words) while true

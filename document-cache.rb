@@ -2,7 +2,8 @@ require 'fileutils.rb'
 require 'rubygems'
 require 'uuid'
 
-ROOT_DIR = File.expand_path("~/.vocabulary-chest")
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
 CACHE_DIR = "#{ROOT_DIR}/docs"
 
 FileUtils::mkdir_p(ROOT_DIR)
@@ -14,20 +15,24 @@ module DocumentCache
 		File.open(filename,'w'){|f| f.write(text)}
 	end
 
-	def self.find_examples_for text, count=1, hide_match=false
+	def self.find_examples_for text, count=1
 		matches = []
 		filenames = Dir["#{CACHE_DIR}/*"]
 		filenames.each {|filename|
 			File.open(filename){|file|
 				contents = file.read
-				sentences = contents.split(".")
-				matches += sentences.select{|s| s.include? text}
+				sentences = contents.split(/[\.?!\n]/)
+				token = VocabularyChest::stem(text)
+				matches += sentences.select{|s| (s =~ /\b#{Regexp.escape(token)}/i) != nil }
 
 				matches = matches[0,count] if matches.size > count
-				matches.map!{|match| match.gsub(text, "___")} if hide_match
-				return matches if matches.size == count
+				return clean(matches) if matches.size == count
 			}
 		}
-		nil
+		clean(matches)
+	end
+
+	def self.clean(matches)
+		matches.map{|m| m + "."}
 	end
 end
