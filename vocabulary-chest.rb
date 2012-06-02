@@ -48,7 +48,7 @@ module VocabularyChest
 	end
 
 	def self.stem word
-		@stemmer.stem(word.gsub(/[,\"\.:()?!]/,"")).downcase
+		@stemmer.stem(word.gsub(/[,\"\.:()?!„“]/,"")).downcase
 	end
 end
 

@@ -16,10 +16,10 @@ end
 
 def ask word, index, words
 		answer = ''
-		while !['y','n'].include?(answer)
+		while !['y','n','skip'].include?(answer)
 			puts 
 			puts "- #{word}"
-			puts "> Do you know this word? [y or n] (#{index + 1} of #{words.size})"
+			puts "> Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
 
 			answer = STDIN.gets.gsub(/[\r\n]/, '')
 		end

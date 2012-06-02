@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'document-cache' )
+
+hide = false
+
+if ARGV.include? "--hide"
+	hide = true
+	ARGV.reject!{|a| a == "--hide"}
+end
+
+search = ARGV.join(" ")
+match = DocumentCache.find_examples_for search, 1, hide
+exit(1) if match.nil?
+puts match

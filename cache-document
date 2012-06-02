@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), 'document-cache' )
+
+text = STDIN.read
+DocumentCache.add(text)
