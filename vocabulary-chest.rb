@@ -1,4 +1,6 @@
 require 'fileutils.rb'
+require 'rubygems'
+require 'fast_stemmer'
 
 ROOT_DIR = File.expand_path("~/.vocabulary-chest")
 KNOWN_FILE = "#{ROOT_DIR}/known"
@@ -11,16 +13,18 @@ FileUtils.touch(UNKNOWN_FILE)
 module VocabularyChest
 	@known_file = File.open(KNOWN_FILE,'a')
 	@unknown_file = File.open(UNKNOWN_FILE,'a')
+	@known_words = nil
+	@unknown_words = nil
 
 	at_exit {@known_file.close}
 	at_exit {@unknown_file.close}
 
 	def self.known_words
-		File.open(KNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
+		@known_words ||= File.open(KNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
 	end
 
 	def self.unknown_words
-		File.open(UNKNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
+		@unknown_words ||= File.open(UNKNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
 	end
 
 	def self.add_to_known_words word
@@ -39,12 +43,11 @@ module VocabularyChest
 	end
 
 	def self.is_known? word
-		comparison = sanitize(word).downcase
-		! known_words.find{|w| w.downcase == comparison}.nil?
+		known_words.include?(sanitize(word))
 	end
 
 	def self.sanitize word
-		word.gsub(/[,\"\.:()?!]/,"")
+		word.gsub(/[,\"\.:()?!]/,"").stem.downcase
 	end
 end
 

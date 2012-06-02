@@ -18,7 +18,7 @@ def ask word, index, words
 		answer = ''
 		while !['y','n'].include?(answer)
 			puts 
-			puts "- #{VocabularyChest::sanitize word}"
+			puts "- #{word}"
 			puts "> Do you know this word? [y or n] (#{index + 1} of #{words.size})"
 
 			answer = STDIN.gets.gsub(/[\r\n]/, '')
@@ -34,13 +34,10 @@ if __FILE__ == $0
 	words = text.split(" ").collect{|w| w.chomp}
 	puts "Thanks. Please wait..."
 
-	known_words = VocabularyChest::known_words
-	unknown_words = VocabularyChest::unknown_words
-
 	words.reject!{|w|VocabularyChest::is_known?(w)}
 	words.reject!{|w|VocabularyChest::contains?(w)} if @@options.include? "-n"
-	words.map!{|w| VocabularyChest::sanitize(w)}
-	words.uniq!
+	#words.map!{|w| VocabularyChest::sanitize(w)}
+	#words.uniq!
 	words.reject!{|w| (w =~ /^[-\d\s,\.]*$/) == 0}
 
 	words.each_with_index {|word, index|
