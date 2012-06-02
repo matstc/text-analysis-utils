@@ -23,7 +23,7 @@ def deumlaut w
 end
 
 def same one, other
-	Amatch::Levenshtein.new(deumlaut(one)).match(deumlaut(other)) <= 1
+	Amatch::Levenshtein.new(deumlaut(one).downcase).match(deumlaut(other).downcase) <= 1
 end
 
 def play words
