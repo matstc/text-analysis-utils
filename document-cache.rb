@@ -72,6 +72,14 @@ module DocumentCache
 	def self.frequency_list
 		text = ""
 		documents.each{|f| text += File.open(f).read }
+		counts = text.split(" ").inject(Hash.new(0)) {|h,w| h[w] += 1; h }
+		counts.reject!{|word, count| count < 2}
+		counts.sort_by {|k,v| v}.reverse
+	end
+
+	def self.stemmed_frequency_list
+		text = ""
+		documents.each{|f| text += File.open(f).read }
 		stems = text.split(" ").map{|w| VocabularyChest::stem(w)}
 		counts = stems.inject(Hash.new(0)) {|h,stem| h[stem] += 1; h }
 		counts.reject!{|stem, count| count < 2}
@@ -81,6 +89,10 @@ end
 
 if __FILE__ == $0
 	puts "The document cache contains #{DocumentCache.documents.size} documents."
+	puts
 	puts "Here are the 10 most frequent stems:"
-	DocumentCache.frequency_list[0,10].each{|stem, count| puts "#{count} #{stem}"}
+	DocumentCache.stemmed_frequency_list[0,10].each{|stem, count| puts "#{count} #{stem}"}
+	puts
+	puts "Here are the 10 most frequent words:"
+	DocumentCache.frequency_list[0,10].each{|word, count| puts "#{count} #{word}"}
 end
