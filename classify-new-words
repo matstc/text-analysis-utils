@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'colorize'
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
 
 def get_text
 	if !ARGV.empty?
@@ -14,16 +17,22 @@ def get_text
 	end
 end
 
-def ask word, index, words
-		answer = ''
-		while !['y','n','skip'].include?(answer)
-			puts 
-			puts "- #{word}"
-			puts "> Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
+def ask word, index, words, text
+  index = text =~ /\b#{Regexp.escape(word)}/
+  snippet = text[index - 15 < 0 ? 0 : index - 15, index + word.size + 15].gsub(/[\r\n]/," ")
 
-			answer = STDIN.gets.gsub(/[\r\n]/, '')
-		end
-		answer
+	answer = ''
+	while !['y','n','skip'].include?(answer)
+		puts
+		puts "------------------------------------------------------------"
+		puts "...#{snippet.gsub(/\b#{Regexp.escape(word)}/, word.green)}..."
+		puts
+		puts "Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
+		STDOUT.write("> ")
+
+		answer = STDIN.gets.gsub(/[\r\n]/, '')
+	end
+	answer
 end
 
 def collect_words_from textual_words
@@ -46,7 +55,7 @@ if __FILE__ == $0
 
 	words = collect_words_from textual_words
 	words.each_with_index {|word, index|
-    answer = ask word, index, words
+    answer = ask word, index, words, text
 		VocabularyChest::add_to_known_words(word) if answer == 'y'
 		VocabularyChest::add_to_unknown_words(word) if answer == 'n'
 	}

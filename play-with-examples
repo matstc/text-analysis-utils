@@ -27,27 +27,36 @@ class Game
 		w.gsub("ä", "ae").gsub("ö", "oe").gsub("ü", "ue")
 	end
 
-	def same one, other
-		Amatch::Levenshtein.new(deumlaut(one).downcase).match(deumlaut(other).downcase) <= 1
+	def proximity one, other
+		Amatch::Levenshtein.new(deumlaut(one).downcase).match(deumlaut(other).downcase)
 	end
 
-	def get_an_answer_for word
+	def get_an_answer_for correct_answer
 		STDOUT.write("> ")
 		answer = STDIN.gets.chomp
-		while answer != '?' and not same(answer, word)
+
+		while answer != '?' and (distance = proximity(answer, correct_answer)) > 1
 			@failures += 1
 			puts "Nope. Try again.".red
+			puts
 			STDOUT.write("> ")
 			answer = STDIN.gets.chomp
 		end
 
-		answer
+		[answer, distance]
+	end
+
+	def extract_matching_word word, sentence
+		stem = VocabularyChest::stem(word)
+		VocabularyChest::sanitize(sentence.split(" ").find{|w| VocabularyChest::stem(w) == stem })
+	end
+
+	def fetch_definition word
+		definitions = `dict #{word} 2>/dev/null | grep '     ' | head -2`.chomp.gsub("     ","").split(/[\r\n]/)
+		definitions.uniq.join(" -- ")
 	end
 
 	def show_question_for word, sentence, words
-		stemmed_match = VocabularyChest::stem(word)
-		sentence_tokens = sentence.split(" ").map{|w| if VocabularyChest::stem(w) == stemmed_match; "______"; else; w; end}
-
 		puts
 		puts
 		puts
@@ -57,7 +66,7 @@ class Game
 		puts "Hit rate: #{'%i' % hit_rate}%".send(color)
 		puts "------------------------------------------------------------".blue
 		puts
-		puts sentence_tokens.join(" ")
+		puts sentence.gsub(extract_matching_word(word, sentence), "______").strip
 		puts 
 		puts "Choices: [".blue + " #{pick_choices_for(word, words).join(" - ")} " + "]".blue
 		puts
@@ -75,13 +84,23 @@ class Game
 
 			sentence = matches.sort{|a, b| a.size <=> b.size}.first
 			show_question_for(word, sentence, words)
+			correct_answer = extract_matching_word(word, sentence)
 
-			if get_an_answer_for(word) == '?'
+			answer, distance = get_an_answer_for(correct_answer)
+			puts
+			if answer == '?'
 				@failures += 1
-				puts
-				puts "The answer was: #{word}."
+				puts "The answer was: #{correct_answer.red}."
 				sleep 1
+			elsif distance > 0
+				puts "Almost... The answer was: #{correct_answer.yellow}."
+				sleep 1
+			else
+				puts "Correct! The answer was: #{correct_answer.green}."
 			end
+
+			definition = fetch_definition(correct_answer)
+			puts "\n#{correct_answer.blue} means: #{definition}" if !definition.empty?
 
 			yield(@turn, hit_rate)
 		}

@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'colorize'
 require File.join(File.dirname(__FILE__), 'document-cache' )
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
 
 count = 1
 count_param = ARGV.find{|a| (a =~ /--\d*/) == 0}
@@ -12,4 +15,6 @@ end
 search = ARGV.join(" ")
 matches = DocumentCache.find_examples_for search, count
 exit(1) if matches.empty?
-puts matches.join("\n--\n")
+
+stem = VocabularyChest::stem(search)
+puts matches.map{|m| m.gsub(/#{Regexp.escape(stem)}/i){|s|s.green} }.join("\n--\n")
