@@ -73,6 +73,14 @@ class Game
 		puts
 	end
 
+	def end_game
+		puts
+		puts
+		puts "#{"Congratulations!".green} Here is a star for you: #{'*'.yellow}"
+		puts
+		exit(0)
+	end
+
 	def play words, &block
 		words.shuffle.each{|word|
 			@turn += 1
@@ -87,18 +95,19 @@ class Game
 			if answer == '?'
 				@failures += 1
 				puts "The answer was: #{correct_answer.red}."
+				display_definition(correct_answer)
+				sleep 2
 			elsif distance > 0
 				puts "Almost... The answer was: #{correct_answer.yellow}."
+				display_definition(correct_answer)
+				sleep 1
 			else
 				puts "Correct! The answer was: #{correct_answer.green}."
+				display_definition(correct_answer)
 			end
 
-			display_definition(correct_answer)
-
-			yield(@turn, hit_rate)
+			end_game if @turn > words.size and (hit_rate > 95)
 		}
-
-		play(words, &block)
 	end
 end
 
@@ -117,13 +126,6 @@ if __FILE__ == $0
 
 	system("clear")
 	puts "\n" * 100
-	Game.new.play(words){|turn, hit_rate|
-		if turn > words.size and (hit_rate > 95)
-			puts
-			puts
-			puts "#{"Congratulations!".green} Here is a star for you: #{'*'.yellow}"
-			puts
-			exit(0)
-		end
-	}
+	game = Game.new
+	game.play(words) while true
 end
