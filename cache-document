@@ -2,5 +2,14 @@
 
 require File.join(File.dirname(__FILE__), 'document-cache' )
 
-text = STDIN.read
-DocumentCache.add(text)
+def get_text
+	if ARGV.empty?
+		STDIN.read
+	else
+		text = ""
+		ARGV.each{|filename| File.open(filename){|file| text += file.read}}
+		text
+	end
+end
+
+DocumentCache.add(get_text)

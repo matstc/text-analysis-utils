@@ -51,9 +51,12 @@ module DocumentCache
 		matches
 	end
 
+	def self.documents
+		Dir["#{CACHE_DIR}/*"]
+	end
+
 	def self.find_examples_for search, count=1
-		filenames = Dir["#{CACHE_DIR}/*"]
-		find_matches_in filenames, search, count
+		find_matches_in documents, search, count
 	end
 
 	def self.clean(sentence)
@@ -66,4 +69,18 @@ module DocumentCache
 		return find_matches_by_grepping(search, [sentence]).values.first
 	end
 
+	def self.frequency_list
+		text = ""
+		documents.each{|f| text += File.open(f).read }
+		stems = text.split(" ").map{|w| VocabularyChest::stem(w)}
+		counts = stems.inject(Hash.new(0)) {|h,stem| h[stem] += 1; h }
+		counts.reject!{|stem, count| count < 2}
+		counts.sort_by {|k,v| v}.reverse
+	end
+end
+
+if __FILE__ == $0
+	puts "The document cache contains #{DocumentCache.documents.size} documents."
+	puts "Here are the 10 most frequent stems:"
+	DocumentCache.frequency_list[0,10].each{|stem, count| puts "#{count} #{stem}"}
 end

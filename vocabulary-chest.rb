@@ -2,7 +2,7 @@ require 'fileutils.rb'
 require 'rubygems'
 require 'lingua/stemmer'
 
-ROOT_DIR = File.expand_path("~/.vocabulary-chest")
+ROOT_DIR = File.expand_path(ENV['chest_location'] || "~/.vocabulary-chest")
 KNOWN_FILE = "#{ROOT_DIR}/known"
 UNKNOWN_FILE = "#{ROOT_DIR}/unknown"
 
@@ -52,7 +52,7 @@ module VocabularyChest
 	end
 
 	def self.sanitize word
-		word.gsub(/[,\"\.:()?!„“]/,"")
+		word.gsub(/[,\"\.:;()?!„“]/,"")
 	end
 end
 
