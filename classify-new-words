@@ -18,14 +18,16 @@ def get_text
 end
 
 def ask word, index, words, text
-  index = text =~ /\b#{Regexp.escape(word)}/
-  snippet = text[index - 15 < 0 ? 0 : index - 15, index + word.size + 15].gsub(/[\r\n]/," ")
+  location = (text =~ /\b#{Regexp.escape(word)}/)
+	location ||= (text =~ /#{Regexp.escape(word)}/) # in case the word starts with a '(' or other character that is not considered the start of a word by the regex engin
+	beginning_of_snippet = location - 15 < 0 ? 0 : location - 15
+	snippet = text[beginning_of_snippet, 30 + word.size].gsub(/[\r\n]/," ")
 
 	answer = ''
 	while !['y','n','skip'].include?(answer)
 		puts
 		puts "------------------------------------------------------------"
-		puts "...#{snippet.gsub(/\b#{Regexp.escape(word)}/, word.green)}..."
+		puts "...#{snippet.gsub(/#{Regexp.escape(word)}/, word.green)}..."
 		puts
 		puts "Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
 		STDOUT.write("> ")
