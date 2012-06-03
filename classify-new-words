@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'colorize'
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+require File.join(File.dirname(__FILE__), 'document-cache' )
 
 
 def get_text
@@ -18,8 +19,7 @@ def get_text
 end
 
 def ask word, index, words, text
-  location = (text =~ /\b#{Regexp.escape(word)}/)
-	location ||= (text =~ /#{Regexp.escape(word)}/) # in case the word starts with a '(' or other character that is not considered the start of a word by the regex engin
+  location = (text =~ /\b#{Regexp.escape(word)}\b/)
 	beginning_of_snippet = location - 15 < 0 ? 0 : location - 15
 	snippet = text[beginning_of_snippet, 30 + word.size].gsub(/[\r\n]/," ")
 
@@ -27,7 +27,7 @@ def ask word, index, words, text
 	while !['y','n','skip'].include?(answer)
 		puts
 		puts "------------------------------------------------------------"
-		puts "...#{snippet.gsub(/#{Regexp.escape(word)}/, word.green)}..."
+		puts "...#{snippet.gsub(word, word.green)}..."
 		puts
 		puts "Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
 		STDOUT.write("> ")
@@ -44,7 +44,7 @@ def collect_words_from textual_words
 	words_by_stem = textual_words.inject({}){|hash, w| hash[VocabularyChest::stem w] = w; hash}
 	words_by_stem.reject!{|s,w| (s =~ /^[-\d\s,\.]*$/) == 0}
 
-	words_by_stem.values
+	words_by_stem.values.uniq
 end
 
 if __FILE__ == $0
@@ -57,7 +57,8 @@ if __FILE__ == $0
 
 	words = collect_words_from textual_words
 	words.each_with_index {|word, index|
-    answer = ask word, index, words, text
+		match = DocumentCache::extract_matching_words(word, text).first
+    answer = ask match, index, words, text
 		VocabularyChest::add_to_known_words(word) if answer == 'y'
 		VocabularyChest::add_to_unknown_words(word) if answer == 'n'
 	}
