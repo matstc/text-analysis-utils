@@ -37,6 +37,7 @@ class Game
 
 		while answer != '?' and (distance = proximity(answer, correct_answer)) > 1
 			@failures += 1
+			display_definition(answer)
 			puts "Nope. Try again.".red
 			puts
 			STDOUT.write("> ")
@@ -54,6 +55,11 @@ class Game
 	def fetch_definition word
 		definitions = `dict #{word} 2>/dev/null | grep '     ' | head -2`.chomp.gsub("     ","").split(/[\r\n]/)
 		definitions.uniq.join(" -- ")
+	end
+
+	def display_definition word
+		definition = fetch_definition(word)
+		puts "\n#{word.blue} means: #{definition}" if !definition.empty?
 	end
 
 	def show_question_for word, sentence, words
@@ -99,8 +105,7 @@ class Game
 				puts "Correct! The answer was: #{correct_answer.green}."
 			end
 
-			definition = fetch_definition(correct_answer)
-			puts "\n#{correct_answer.blue} means: #{definition}" if !definition.empty?
+			display_definition(correct_answer)
 
 			yield(@turn, hit_rate)
 		}
@@ -122,9 +127,13 @@ if __FILE__ == $0
 	words = input.split("\n")
 	words.reject!{|w| DocumentCache.find_examples_for(w).empty?}
 
+	system("clear")
+	puts "\n" * 100
 	Game.new.play(words){|turn, hit_rate|
 		if turn > words.size and (hit_rate > 95)
-			puts "Congratulations. Here is a star for you: *"
+			puts
+			puts "#{"Congratulations!".green} Here is a star for you: #{'*'.yellow}"
+			puts
 			exit(0)
 		end
 	}
