@@ -18,10 +18,10 @@ class Game
 	def hit_rate
 		number_of_turns_we_remember = [@words.size, @turn].min
 		recent_results = number_of_turns_we_remember < @results.size ? @results[@results.size - number_of_turns_we_remember, @results.size] : @results
-		successes = recent_results.inject(0){|sum, value| sum+=value; sum}
-		failures = recent_results.size - successes
+		hits = recent_results.inject(0){|sum, value| sum+=value; sum}
+		misses = recent_results.size - hits
 
-		rate = 100 - failures / number_of_turns_we_remember.to_f * 100
+		rate = 100 - misses / number_of_turns_we_remember.to_f * 100
 		rate >= 0 ? rate : 0
 	end
 
@@ -66,7 +66,7 @@ class Game
 		puts
 		puts "Turn #{@turn}".blue
 		puts "#{@words.size} words".blue
-		color = hit_rate < 75 ? :red : 'green'
+		color = hit_rate < 75 ? :red : (hit_rate < 90 ? :yellow : 'green')
 		puts "Hit rate: #{'%i' % hit_rate}%".send(color)
 		puts "------------------------------------------------------------".blue
 		puts
