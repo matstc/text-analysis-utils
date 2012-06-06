@@ -22,6 +22,8 @@ def ask word, index, words, text
 	puts word
   location = (text =~ /\b#{Regexp.escape(word)}\b/)
   location ||= text.index(word)
+	(puts "Skipping word: #{word}"; return 'skip') if location.nil?
+
 	beginning_of_snippet = location - 15 < 0 ? 0 : location - 15
 	snippet = text[beginning_of_snippet, 30 + word.size].gsub(/[\r\n]/," ")
 
