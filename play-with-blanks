@@ -23,7 +23,7 @@ if __FILE__ == $0
 
 	puts "Playing with #{example_sentences.size} sentences and #{words.size} words."
 
-	Game.new.play(words){|word|
+	Game.new(words).play{|word|
 		sentence = example_sentences.shuffle.find{|s| (s =~ /\b#{Regexp.escape(word)}\b/i) != nil}
 		[sentence, $&]
 	}

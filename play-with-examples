@@ -17,7 +17,7 @@ if __FILE__ == $0
 	words = input.split("\n")
 	words.reject!{|w| DocumentCache.find_examples_for(w).empty?}
 
-	Game.new.play(words){ |word|
+	Game.new(words).play{ |word|
 		matches = DocumentCache.find_examples_for(word, 10).keys
 		sentence = matches.sort{|a, b| a.size <=> b.size}.first
 		correct_answer = DocumentCache::extract_matching_words(word, sentence).first

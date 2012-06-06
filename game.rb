@@ -3,19 +3,25 @@ require 'amatch'
 require 'colorize'
 
 class Game
-	def initialize
-		@failures = 0
+	def initialize words
+		@words = words
+		@results = []
 		@turn = 0
 	end
 
-	def pick_choices_for word, words
-		others = words.reject{|w| w == word}
+	def pick_choices_for word
+		others = @words.reject{|w| w == word}
 		choices = (others.shuffle[0,4] + [word])
 		choices.shuffle
 	end
 
 	def hit_rate
-		rate = 100 - @failures / @turn.to_f * 100
+		number_of_turns_we_remember = [@words.size, @turn].min
+		recent_results = number_of_turns_we_remember < @results.size ? @results[@results.size - number_of_turns_we_remember, @results.size] : @results
+		successes = recent_results.inject(0){|sum, value| sum+=value; sum}
+		failures = recent_results.size - successes
+
+		rate = 100 - failures / number_of_turns_we_remember.to_f * 100
 		rate >= 0 ? rate : 0
 	end
 
@@ -32,7 +38,7 @@ class Game
 		answer = STDIN.gets.chomp
 
 		while answer != '?' and proximity(answer, correct_answer) > 1
-			@failures += 1
+			@results << 0
 			display_definition(answer)
 			puts
 			puts "Nope. Try again.".red
@@ -54,19 +60,19 @@ class Game
 		puts "\n#{word.blue} means: #{definition}" if !definition.empty?
 	end
 
-	def show_question_for word, sentence, words
+	def show_question_for word, sentence
 		puts
 		puts
 		puts
 		puts "Turn #{@turn}".blue
-		puts "#{words.size} words".blue
+		puts "#{@words.size} words".blue
 		color = hit_rate < 75 ? :red : 'green'
 		puts "Hit rate: #{'%i' % hit_rate}%".send(color)
 		puts "------------------------------------------------------------".blue
 		puts
-		puts sentence.gsub(/\b#{Regexp.escape(word)}\b/i, "______").strip
+		puts ((sentence =~ /\b#{Regexp.escape(word)}\b/i) != nil ? sentence.gsub(/\b#{Regexp.escape(word)}\b/i, "______") : sentence.gsub(word, "______")).strip
 		puts 
-		puts "Choices: [" + " #{pick_choices_for(word, words).join(" - ")} ".blue + "]"
+		puts "Choices: [" + " #{pick_choices_for(word).join(" - ")} ".blue + "]"
 		puts
 	end
 
@@ -80,35 +86,37 @@ class Game
 	def respond_to_answer answer, correct_answer
 		puts
 		if answer == '?'
-			@failures += 1
+			@results << 0
 			puts "The answer was: #{correct_answer.red}."
 			display_definition(correct_answer)
 			sleep 2
 		elsif proximity(answer, correct_answer) > 0
+			@results << 1
 			puts "Sort of... the answer was: #{correct_answer.yellow}."
 			display_definition(correct_answer)
 			sleep 1
 		else
+			@results << 1
 			puts "Correct! The answer was: #{correct_answer.green}."
 			display_definition(correct_answer)
 		end
 	end
 
-	def play words, &block
-		words.shuffle.each{|word|
+	def play &block
+		@words.shuffle.each{|word|
 			@turn += 1
 
 			sentence, correct_answer = yield word
 			(puts "Could not find anything to play with for word #{word}."; next) if sentence.nil? or correct_answer.nil?
 
-			show_question_for(correct_answer, sentence, words)
+			show_question_for(correct_answer, sentence)
 			answer = get_an_answer_for(correct_answer)
 			respond_to_answer(answer, correct_answer)
 
-			(end_game; return) if @turn >= words.size and (hit_rate >= 95)
+			(end_game; return) if @turn >= @words.size and (hit_rate >= 95)
 		}
 
-		play(words, &block)
+		play(&block)
 	end
 end
 
