@@ -19,7 +19,6 @@ def get_text
 end
 
 def ask word, index, words, text
-	puts word
   location = (text =~ /\b#{Regexp.escape(word)}\b/)
   location ||= text.index(word)
 	(puts "Skipping word: #{word}"; return 'skip') if location.nil?

@@ -5,12 +5,23 @@ require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
 def analyse text
 	words = text.split(" ")
 	known = words.select{|w| VocabularyChest.is_known? w}
-	return [words.size, known.size.to_f / words.size * 100]
+	unknown = words - known
+	return [known, unknown]
 end
 
 def output options
-	puts "Total number of words: #{options[0]}"
-	puts "Percentage of words known: #{options[1].to_i}%"
+	known, unknown = options
+	size = known.size + unknown.size
+	
+	puts
+	puts "--"
+	puts
+	puts "Unknown words: #{unknown.join(", ")}"
+	puts
+	puts "Total number of unknown words: #{unknown.size}"
+	puts "Total number of known words: #{known.size}"
+	puts "Total number of words: #{size}"
+	puts "Percentage of words known: #{'%.2f' % (known.size.to_f / size * 100)}%"
 end
 
 if __FILE__ == $0
