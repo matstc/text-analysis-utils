@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'fileutils.rb'
 require 'rubygems'
 require 'lingua/stemmer'
