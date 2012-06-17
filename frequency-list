@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby1.9.3
+#!/usr/bin/env ruby
 
 require File.join(File.dirname(__FILE__), 'document-cache' )
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )

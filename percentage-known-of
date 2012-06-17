@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 
 require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+load File.join(File.dirname(__FILE__), 'lookup' )
 
 def analyse text
 	words = text.split(" ")
 	known = words.select{|w| VocabularyChest.is_known? w}
-	unknown = words - known
+	unknown = (words - known).map{|w| VocabularyChest::sanitize w}
 	return [known, unknown]
 end
 
@@ -15,8 +16,11 @@ def output options
 	
 	puts
 	puts "--"
-	puts
-	puts "Unknown words: #{unknown.join(", ")}"
+	puts "UNKNOWN WORDS: #{unknown.join(", ")}"
+	puts 
+	puts "DEFINITIONS"
+	puts Lookup::go(unknown)
+	puts "--"
 	puts
 	puts "Total number of unknown words: #{unknown.size}"
 	puts "Total number of known words: #{known.size}"

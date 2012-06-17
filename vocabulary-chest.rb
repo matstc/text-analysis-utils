@@ -52,7 +52,7 @@ module VocabularyChest
 	end
 
 	def self.sanitize word
-		word.gsub(/[,\"\.:;()?!]/,"")
+		word.gsub(/[,\"\.:;()?!„“]/,"")
 	end
 end
 
