@@ -44,7 +44,7 @@ module VocabularyChest
 	end
 
 	def self.is_known? word
-		known_words.include?(stem(word))
+		known_words.include?(stem(word)) or sanitize(word).empty? or (sanitize(word) =~ /^[-\d]*$/) != nil
 	end
 
 	def self.stem word
@@ -52,7 +52,7 @@ module VocabularyChest
 	end
 
 	def self.sanitize word
-		word.gsub(/[,\"\.:;()?!„“]/,"")
+		word.gsub(/[,\"\.:;()?!]/,"")
 	end
 end
 

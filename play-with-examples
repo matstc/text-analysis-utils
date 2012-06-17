@@ -15,7 +15,8 @@ if __FILE__ == $0
 
 	input = get_input
 	words = input.split("\n")
-	words.reject!{|w| DocumentCache.find_examples_for(w).empty?}
+	words.reject!{|w| STDOUT.write("."); STDOUT.flush; DocumentCache.find_examples_for(w).empty?}
+	puts
 
 	Game.new(words).play{ |word|
 		matches = DocumentCache.find_examples_for(word, 10).keys

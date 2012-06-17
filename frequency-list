@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby1.9.3
+
+require File.join(File.dirname(__FILE__), 'document-cache' )
+require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
+
+text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f).read; text}
+
+frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[VocabularyChest::stem(w)] << w; hash }
+
+frequencies = frequencies.sort{|a,b| a[1].size <=> b[1].size}.reverse.find_all{|k,v| v.size > 1}
+
+def output frequencies
+	frequencies.each{|k,v| puts "#{v.size}\t#{k}\t#{v[0,6].join(",")}#{v.size > 6 ? "..." : ""}"}
+end
+
+if ARGV[0] == "--unknown"
+	output frequencies.find_all{|k,v| !VocabularyChest::is_known?(k)}
+else
+	output frequencies
+end
