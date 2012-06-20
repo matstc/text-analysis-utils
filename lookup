@@ -12,7 +12,7 @@ module Lookup
 	end
 
 	def self.go words
-		words.map{|w| sanitize w}.map{|w| "#{w}: #{fetch_definition w}"}.join("\n")
+		words.map{|w| sanitize w}.map{|w| "#{w}\t#{fetch_definition w}"}.join("\n")
 	end
 end
 
