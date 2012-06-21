@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby1.9.3
+
+require 'rubygems'
+require 'colorize'
+require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
+require File.join(File.dirname(__FILE__), '../lib/document-cache' )
+
+
+def get_text
+	if !ARGV.empty?
+		text = ""
+		ARGV.each {|filename|
+			text += File.open(filename, 'r'){|file| file.read}
+		}
+		text
+	else
+		STDIN.read
+	end
+end
+
+def ask word, index, words, text
+  location = (text =~ /\b#{Regexp.escape(word)}\b/)
+	puts "!!!!" if word == "notwendig"
+  location = text.index(word) if location.nil?
+	(puts "Skipping word: #{word}"; return 'skip') if location.nil?
+
+	beginning_of_snippet = location - 15 < 0 ? 0 : location - 15
+	snippet = text[beginning_of_snippet, 30 + word.size].gsub(/[\r\n]/," ")
+
+	answer = ''
+	while !['y','n','skip'].include?(answer)
+		puts
+		puts "------------------------------------------------------------"
+		puts "...#{snippet.gsub(word, word.green)}..."
+		puts
+		puts "Do you know this word? [y or n or skip] (#{index + 1} of #{words.size})"
+		STDOUT.write("> ")
+
+		answer = STDIN.gets.gsub(/[\r\n]/, '')
+	end
+	answer
+end
+
+def collect_words_from textual_words
+	textual_words.reject!{|w|VocabularyChest::is_known?(w)}
+	textual_words.reject!{|w|VocabularyChest::contains?(w)} if @@options.include? "-n"
+
+	words_by_stem = textual_words.inject({}){|hash, w| hash[VocabularyChest::stem w] = w; hash}
+	words_by_stem.reject!{|s,w| (s =~ /^[-\d\s,\.]*$/) == 0}
+
+	words_by_stem.values.uniq
+end
+
+if __FILE__ == $0
+	@@options = ARGV.select{|arg| ["-n"].include? arg}
+	ARGV.reject!{|arg| @@options.include? arg}
+
+	text = get_text
+	textual_words = text.split(" ").collect{|w| w.chomp}
+	puts "Thanks. Please wait..."
+
+	words = collect_words_from textual_words
+	words.each_with_index {|word, index|
+		match = DocumentCache::extract_matching_words(word, text).first
+    answer = ask match, index, words, text
+		VocabularyChest::add_to_known_words(word) if answer == 'y'
+		VocabularyChest::add_to_unknown_words(word) if answer == 'n'
+	}
+
+	puts "Done."
+end

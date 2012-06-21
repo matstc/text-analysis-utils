@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+def analyse text
+	words = text.split(" ").size.to_f
+	sentences = text.split(/\.|\?|!/).reject{|s| s.strip.empty?}.size.to_f
+	syllables = text.split(" ").inject([]){|sum, w| sum + vowels(w)}
+	syllables = syllables.size.to_f * 0.9 # for silent vowels
+	words_with_more_than_three_syllables = text.split(" ").select{|w| vowels(w).size >= 3}
+	ms = words_with_more_than_three_syllables.size.to_f / text.split(" ").size.to_f * 100
+
+  stats = {:words => words, 
+					 :sentences => sentences, 
+					 :syllables => syllables, 
+					 :ms => ms, 
+					 :wiener_sachtextformel => wiener_sachtextformel(sentences, words, ms), 
+					 :grade_level => grade(sentences, words, syllables)}
+end
+
+def wiener_sachtextformel sentences, words, ms
+	0.2656 * (words / sentences) + 0.2744 * ms -1.693
+end
+
+def grade sentences, words, syllables
+	(0.39 * (words / sentences) + 11.8 * (syllables / words) - 15.59)
+end
+
+def vowels w
+	w.split(/b|c|d|f|g|h|j|k|l|m|n|p|q|r|s|t|v|w|z/i).reject{|s|s.empty?}
+end
+
+def output options
+	puts
+	if !options[:source].nil?
+		puts "#{options[:source]}:"
+	end
+	puts "Number of sentences: #{options[:sentences]}"
+	puts "Number of words: #{options[:words]}"
+	puts "Number of syllabes: #{options[:syllables]}"
+	puts "Average number of syllables per word: #{ '%.2f' % (options[:syllables] / options[:words])}"
+	puts "Average number of words per sentence: #{'%.2f' % (options[:words] / options[:sentences])}"
+	puts "Wiener Sachtextformel: #{'%.2f' % options[:wiener_sachtextformel]}"
+	puts "Flesch-Kincaid Grade Level: #{'%.2f' % options[:grade_level]}"
+	puts
+end
+
+if __FILE__ == $0
+	if !ARGV.empty?
+		ARGV.each {|filename|
+			text = File.open(filename,'r'){|file| file.read}
+			output(analyse(text).merge(:source => filename))
+		}
+	else
+		text = STDIN.read
+		output(analyse(text))
+	end
+end
+
