@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-
-text = STDIN.read
-File.open("/tmp/prepared-text", 'w'){|f| f.write(text)}
-exec("classify-new-words /tmp/prepared-text && \
-	cache-document /tmp/prepared-text && \
-	echo '\nREADABILITY STATISTICS' && \
-	readability-of /tmp/prepared-text && \
-	percentage-known-of /tmp/prepared-text")
