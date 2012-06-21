@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
-load File.join(File.dirname(__FILE__), '../lib/lookup' )
+require File.join(File.dirname(__FILE__), '../lib/lookup' )
 
 def analyse text
 	words = text.split(" ")
@@ -28,16 +28,13 @@ def output options
 	puts "Percentage of words known: #{'%.2f' % (known.size.to_f / size * 100)}%"
 end
 
-if __FILE__ == $0
-	if !ARGV.empty?
-		ARGV.each {|filename|
-			text = File.open(filename,'r'){|file| file.read}
-			puts "#{filename}:"
-			output(analyse(text))
-		}
-	else
-		text = STDIN.read
-		output(analyse(text))
-	end
+if !ARGV.empty?
+  ARGV.each {|filename|
+    text = File.open(filename,'r'){|file| file.read}
+    puts "#{filename}:"
+    output(analyse(text))
+  }
+else
+  text = STDIN.read
+  output(analyse(text))
 end
-

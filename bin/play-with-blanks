@@ -2,29 +2,27 @@
 
 require File.join(File.dirname(__FILE__), '../lib/game' )
 
-if __FILE__ == $0
-	def get_input
-		if !ARGV.empty?
-		else
-			STDIN.read
-		end
-	end
-
-	(puts "Usage: #{$0} <file with words to practice> <file with examples>"; exit(1)) if ARGV.size < 2
-
-	input = File.open(ARGV.shift){|f| f.read}
-	words = input.split("\n").uniq
-
-	example_sentences = []
-	ARGV.each{|filename| example_sentences += File.open(filename).readlines}
-	example_sentences.map!{|s| s.chomp}
-	example_sentences.reject!{|s| words.find{|w| (s =~ /\b#{Regexp.escape(w)}\b/i) != nil} == nil}
-	words.reject!{|w| example_sentences.find{|s| (s =~ /\b#{Regexp.escape(w)}\b/i) != nil} == nil}
-
-	puts "Playing with #{example_sentences.size} sentences and #{words.size} words."
-
-	Game.new(words).play{|word|
-		sentence = example_sentences.shuffle.find{|s| (s =~ /\b#{Regexp.escape(word)}\b/i) != nil}
-		[sentence, $&]
-	}
+def get_input
+  if !ARGV.empty?
+  else
+    STDIN.read
+  end
 end
+
+(puts "Usage: #{$0} <file with words to practice> <file with examples>"; exit(1)) if ARGV.size < 2
+
+input = File.open(ARGV.shift){|f| f.read}
+words = input.split("\n").uniq
+
+example_sentences = []
+ARGV.each{|filename| example_sentences += File.open(filename).readlines}
+example_sentences.map!{|s| s.chomp}
+example_sentences.reject!{|s| words.find{|w| (s =~ /\b#{Regexp.escape(w)}\b/i) != nil} == nil}
+words.reject!{|w| example_sentences.find{|s| (s =~ /\b#{Regexp.escape(w)}\b/i) != nil} == nil}
+
+puts "Playing with #{example_sentences.size} sentences and #{words.size} words."
+
+Game.new(words).play{|word|
+  sentence = example_sentences.shuffle.find{|s| (s =~ /\b#{Regexp.escape(word)}\b/i) != nil}
+  [sentence, $&]
+}

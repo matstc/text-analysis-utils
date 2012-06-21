@@ -7,6 +7,6 @@ Gem::Specification.new do |s|
   s.author = "Matt"
   s.summary = %q{Utilities to help language learners}
   s.homepage = %q{http://github.com/matstc/text-analysis-utils}
-  s.files = ["lib/text-analysis-utils.rb", "lib/document-cache.rb", "lib/vocabulary-chest.rb", "lib/game.rb"]
+  s.files = ["lib/text-analysis-utils.rb", "lib/document-cache.rb", "lib/vocabulary-chest.rb", "lib/game.rb", "lib/lookup.rb"]
   s.executables += ['cache-document','classify-new-words','find-examples-for','frequency-list','lookup','percentage-known-of','play-with-blanks','play-with-examples','prepare-text','proximity-of-words','readability-of','vocabulary-coverage']
 end

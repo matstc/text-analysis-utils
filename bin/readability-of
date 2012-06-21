@@ -43,15 +43,12 @@ def output options
 	puts
 end
 
-if __FILE__ == $0
-	if !ARGV.empty?
-		ARGV.each {|filename|
-			text = File.open(filename,'r'){|file| file.read}
-			output(analyse(text).merge(:source => filename))
-		}
-	else
-		text = STDIN.read
-		output(analyse(text))
-	end
+if !ARGV.empty?
+  ARGV.each {|filename|
+    text = File.open(filename,'r'){|file| file.read}
+    output(analyse(text).merge(:source => filename))
+  }
+else
+  text = STDIN.read
+  output(analyse(text))
 end
-

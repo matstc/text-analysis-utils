@@ -3,13 +3,14 @@
 require File.join(File.dirname(__FILE__), '../lib/document-cache' )
 require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
 
-text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f).read; text}
+text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text}
 
 frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[VocabularyChest::stem(w)] << w; hash }
 
 frequencies = frequencies.sort{|a,b| a[1].size <=> b[1].size}.reverse
 
 def output frequencies
+  STDOUT.sync = true
 	frequencies.each{|k,v| puts "#{v.size}\t#{k}\t#{v[0,6].join(",")}#{v.size > 6 ? "..." : ""}"}
 end
 

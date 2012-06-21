@@ -51,21 +51,19 @@ def collect_words_from textual_words
 	words_by_stem.values.uniq
 end
 
-if __FILE__ == $0
-	@@options = ARGV.select{|arg| ["-n"].include? arg}
-	ARGV.reject!{|arg| @@options.include? arg}
+@@options = ARGV.select{|arg| ["-n"].include? arg}
+ARGV.reject!{|arg| @@options.include? arg}
 
-	text = get_text
-	textual_words = text.split(" ").collect{|w| w.chomp}
-	puts "Thanks. Please wait..."
+text = get_text
+textual_words = text.split(" ").collect{|w| w.chomp}
+puts "Thanks. Please wait..."
 
-	words = collect_words_from textual_words
-	words.each_with_index {|word, index|
-		match = DocumentCache::extract_matching_words(word, text).first
-    answer = ask match, index, words, text
-		VocabularyChest::add_to_known_words(word) if answer == 'y'
-		VocabularyChest::add_to_unknown_words(word) if answer == 'n'
-	}
+words = collect_words_from textual_words
+words.each_with_index {|word, index|
+  match = DocumentCache::extract_matching_words(word, text).first
+  answer = ask match, index, words, text
+  VocabularyChest::add_to_known_words(word) if answer == 'y'
+  VocabularyChest::add_to_unknown_words(word) if answer == 'n'
+}
 
-	puts "Done."
-end
+puts "Done."

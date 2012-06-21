@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+
+command =<<EOF
 
 total_occurrences=`expr $(frequency-list | awk '{print $1}' | xargs | sed 's/ / + /g')`
 unknown_occurrences=`expr $(frequency-list --unknown | awk '{print $1}' | xargs | sed 's/ / + /g')`
@@ -8,3 +10,7 @@ echo Total occurrences: $total_occurrences
 echo Unknown occurrences: $unknown_occurrences
 echo Your current vocabulary knowledge covers $(echo "scale=2;($total_occurrences - $unknown_occurrences) / $total_occurrences * 100" | bc -q)% of all occurrences
 echo The next 500 words will bring your cover to $(echo "scale=2;($total_occurrences - $unknown_occurrences + $next_500_occurrences) / $total_occurrences * 100" | bc -q)%
+
+EOF
+
+system command

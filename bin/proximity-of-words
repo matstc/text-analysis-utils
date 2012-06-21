@@ -28,19 +28,17 @@ def words_of text
 	words = text.split(" ").uniq
 end
 
-if __FILE__ == $0
-	if ARGV.size < 2
-		puts "usage: ./script <new text> <known text>"
-		exit 1
-	end
-
-	filename = ARGV.shift
-	text = File.open(filename,'r'){|file| file.read}
-
-	known_text ||= ""
-	ARGV.each {|filename|
-		known_text += File.open(filename,'r'){|file| file.read}
-	}
-
-	analyse text, known_text
+if ARGV.size < 2
+  puts "usage: ./script <new text> <known text>"
+  exit 1
 end
+
+filename = ARGV.shift
+text = File.open(filename,'r'){|file| file.read}
+
+known_text ||= ""
+ARGV.each {|filename|
+  known_text += File.open(filename,'r'){|file| file.read}
+}
+
+analyse text, known_text
