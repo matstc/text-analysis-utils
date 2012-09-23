@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-text = STDIN.read
+text = ARGV.empty? ? STDIN.read : ARGV.map{|a|File.open(a){|f|f.read}}.join("\n\n")
 File.open("/tmp/prepared-text", 'w'){|f| f.write(text)}
 exec("classify-new-words /tmp/prepared-text && \
 	cache-document /tmp/prepared-text && \
