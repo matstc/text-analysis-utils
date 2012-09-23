@@ -3,7 +3,7 @@ require 'fileutils.rb'
 require 'rubygems'
 require 'lingua/stemmer'
 
-ROOT_DIR = File.expand_path(ENV['chest_location'] || "~/.vocabulary-chest")
+ROOT_DIR = File.expand_path(ENV['vocabulary_chest_location'] || "~/.vocabulary-chest")
 KNOWN_FILE = "#{ROOT_DIR}/known"
 UNKNOWN_FILE = "#{ROOT_DIR}/unknown"
 
@@ -16,7 +16,7 @@ module VocabularyChest
 	@unknown_file = File.open(UNKNOWN_FILE,'a')
 	@known_words = nil
 	@unknown_words = nil
-	@stemmer= Lingua::Stemmer.new(:language => "de")
+	@stemmer= Lingua::Stemmer.new(:language => ENV['vocabulary_chest_language'] || "de")
 
 	at_exit {@known_file.close}
 	at_exit {@unknown_file.close}
