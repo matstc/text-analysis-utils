@@ -1,13 +1,17 @@
 #!/usr/bin/env ruby
+# Call with a file to list words by the frequency of their stems
+# Call with no arguments to list the frequencies of the words in the vocabulary chest.
 
 require File.join(File.dirname(__FILE__), '../lib/document-cache' )
 require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
 
-text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text}
+def frequencies text=nil
+  text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text} if text.nil?
 
-frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[VocabularyChest::stem(w)] << w; hash }
+  frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[VocabularyChest::stem(w)] << w; hash }
 
-frequencies = frequencies.sort{|a,b| a[1].size <=> b[1].size}.reverse
+  frequencies = frequencies.sort{|a,b| a[1].size <=> b[1].size}.reverse
+end
 
 def output frequencies
   STDOUT.sync = true
@@ -16,6 +20,8 @@ end
 
 if ARGV[0] == "--unknown"
 	output frequencies.find_all{|k,v| !VocabularyChest::is_known?(v[0])}
-else
+elsif ARGV.empty?
 	output frequencies
+else
+  output(frequencies(File.read(ARGV[0])))
 end
