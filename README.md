@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/matstc/text-analysis-utils.png?branch=master)](https://travis-ci.org/matstc/text-analysis-utils)
+
 # Install
     gem install text-analysis-utils
 
