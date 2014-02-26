@@ -15,6 +15,7 @@ GEM
     colorize (0.6.0)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
+    rake (10.1.1)
     ruby-stemmer (0.9.3)
     systemu (2.5.2)
     tins (0.13.1)
@@ -25,4 +26,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  rake
   text-analysis-utils!
