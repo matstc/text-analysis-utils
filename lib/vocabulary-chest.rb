@@ -3,30 +3,19 @@ require 'fileutils.rb'
 require 'rubygems'
 require 'lingua/stemmer'
 
-ROOT_DIR = File.expand_path(ENV['vocabulary_chest_location'] || "~/.vocabulary-chest")
-KNOWN_FILE = "#{ROOT_DIR}/known"
-UNKNOWN_FILE = "#{ROOT_DIR}/unknown"
-
-FileUtils::mkdir_p(ROOT_DIR)
-FileUtils.touch(KNOWN_FILE)
-FileUtils.touch(UNKNOWN_FILE)
+require_relative 'tau_config'
 
 module VocabularyChest
-	@known_file = File.open(KNOWN_FILE,'a')
-	@unknown_file = File.open(UNKNOWN_FILE,'a')
-	@known_words = nil
-	@unknown_words = nil
-	@stemmer= Lingua::Stemmer.new(:language => ENV['vocabulary_chest_language'] || "de")
-
-	at_exit {@known_file.close}
-	at_exit {@unknown_file.close}
+	@known_file = File.open(TAUConfig.known_file,'a')
+	@unknown_file = File.open(TAUConfig.unknown_file,'a')
+	@stemmer= Lingua::Stemmer.new(:language => ENV['vocabulary_chest_language'] || "en")
 
 	def self.known_words
-		@known_words ||= File.open(KNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
+		File.open(@known_file,'r'){|f|f.readlines}.collect{|line| line.chomp}
 	end
 
 	def self.unknown_words
-		@unknown_words ||= File.open(UNKNOWN_FILE,'r'){|f|f.readlines}.collect{|line| line.chomp}
+		File.open(@unknown_file,'r'){|f|f.readlines}.collect{|line| line.chomp}
 	end
 
 	def self.add_to_known_words word
@@ -55,10 +44,4 @@ module VocabularyChest
 	def self.sanitize word
 		word.gsub(/[,\"\.:;()?!„“]/,"")
 	end
-end
-
-if __FILE__ == $0
-	known = VocabularyChest::known_words
-	unknown = VocabularyChest::unknown_words
-	puts "The chest contains #{known.size} known words."
 end

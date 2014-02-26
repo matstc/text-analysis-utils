@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
-require File.join(File.dirname(__FILE__), '../lib/lookup' )
+require_relative '../lib/vocabulary-chest'
 
 def analyse text
 	words = text.split(" ")
@@ -18,10 +17,6 @@ def output options
 	puts "--"
 	puts "UNKNOWN WORDS: #{unknown.join(", ")}"
 	puts 
-	puts "DEFINITIONS"
-	puts Lookup::go(unknown)
-	puts "--"
-	puts
 	puts "Total number of unknown words: #{unknown.size}"
 	puts "Total number of known words: #{known.size}"
 	puts "Total number of words: #{size}"

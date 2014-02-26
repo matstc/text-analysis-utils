@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
-require File.join(File.dirname(__FILE__), 'document-cache' )
-require File.join(File.dirname(__FILE__), 'game' )
-
+require_relative 'config'
+require_relative 'vocabulary-chest'
+require_relative 'document-cache'
+require_relative 'game'

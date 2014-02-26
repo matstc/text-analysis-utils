@@ -2,8 +2,8 @@
 
 require 'rubygems'
 require 'colorize'
-require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
-require File.join(File.dirname(__FILE__), '../lib/document-cache' )
+require_relative '../lib/vocabulary-chest'
+require_relative '../lib/document-cache'
 
 
 def get_text
@@ -20,7 +20,6 @@ end
 
 def ask word, index, words, text
   location = (text =~ /\b#{Regexp.escape(word)}\b/)
-	puts "!!!!" if word == "notwendig"
   location = text.index(word) if location.nil?
 	(puts "Skipping word: #{word}"; return 'skip') if location.nil?
 

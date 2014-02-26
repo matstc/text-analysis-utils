@@ -1,18 +1,13 @@
 require 'fileutils.rb'
-require 'rubygems'
 require 'uuid'
 
-require File.join(File.dirname(__FILE__), 'vocabulary-chest' )
-
-CACHE_DIR = "#{ROOT_DIR}/docs"
-
-FileUtils::mkdir_p(ROOT_DIR)
-FileUtils::mkdir_p(CACHE_DIR)
+require_relative 'tau_config'
+require_relative 'vocabulary-chest'
 
 module DocumentCache
-	def self.add search
-		filename = "#{CACHE_DIR}/#{UUID.new.generate}"
-		File.open(filename,'w'){|f| f.write(search)}
+	def self.add document
+		filename = "#{TAUConfig::cache_dir}/#{UUID.new.generate}"
+		File.open(filename,'w'){|f| f.write(document)}
 	end
 
 	def self.find_matches_by_stemming search, sentences
@@ -52,7 +47,7 @@ module DocumentCache
 	end
 
 	def self.documents
-		Dir["#{CACHE_DIR}/*"]
+		Dir["#{TAUConfig::cache_dir}/*"]
 	end
 
 	def self.find_examples_for search, count=1
@@ -85,14 +80,4 @@ module DocumentCache
 		counts.reject!{|stem, count| count < 2}
 		counts.sort_by {|k,v| v}.reverse
 	end
-end
-
-if __FILE__ == $0
-	puts "The document cache contains #{DocumentCache.documents.size} documents."
-	puts
-	puts "Here are the 10 most frequent stems:"
-	DocumentCache.stemmed_frequency_list[0,10].each{|stem, count| puts "#{count} #{stem}"}
-	puts
-	puts "Here are the 10 most frequent words:"
-	DocumentCache.frequency_list[0,10].each{|word, count| puts "#{count} #{word}"}
 end

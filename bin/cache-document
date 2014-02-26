@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), '../lib/document-cache' )
+require_relative '../lib/document-cache'
 
 def get_text
 	if ARGV.empty?

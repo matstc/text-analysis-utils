@@ -2,8 +2,8 @@
 # Call with a file to list words by the frequency of their stems
 # Call with no arguments to list the frequencies of the words in the vocabulary chest.
 
-require File.join(File.dirname(__FILE__), '../lib/document-cache' )
-require File.join(File.dirname(__FILE__), '../lib/vocabulary-chest' )
+require_relative '../lib/document-cache'
+require_relative '../lib/vocabulary-chest'
 
 def frequencies text=nil
   text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text} if text.nil?

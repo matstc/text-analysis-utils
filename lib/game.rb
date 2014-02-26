@@ -105,6 +105,8 @@ class Game
 	end
 
 	def play &block
+    (puts "Could not find any words to play with."; exit 1) if @words.empty?
+
 		@words.shuffle.each{|word|
 			@turn += 1
 
@@ -121,4 +123,3 @@ class Game
 		play(&block)
 	end
 end
-

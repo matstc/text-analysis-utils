@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-
-require File.join(File.dirname(__FILE__), '../lib/lookup' )
-
-if !ARGV.empty?
-  puts Lookup::go ARGV
-else
-  puts Lookup::go STDIN.read.split("\n")
-end

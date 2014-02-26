@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
 require 'amatch'
 
 def distance w1, w2
@@ -29,7 +28,7 @@ def words_of text
 end
 
 if ARGV.size < 2
-  puts "usage: ./script <new text> <known text>"
+  puts "usage: #{$0} file_with_new_words file_with_known_words"
   exit 1
 end
 

@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'colorize'
-require File.join(File.dirname(__FILE__), '../lib/document-cache' )
+require_relative '../lib/document-cache'
 
 count = 1
 count_param = ARGV.find{|a| (a =~ /--\d*/) == 0}
