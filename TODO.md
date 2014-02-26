@@ -2,3 +2,4 @@
 - make document cache a real class
 - make vocabulary chest a real class
 - move TAU config parameters into appropriate classes
+- get rid of class level variables

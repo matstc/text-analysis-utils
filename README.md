@@ -10,7 +10,7 @@ Whenever you read a piece of text, cache it in your document cache:
 
     cache-document <file>
 
-You can also call `cache-document` without an argument and paste the text.
+You can also call `cache-document` without an argument and paste the text (use `control-D` when you're done).
 
 Once you have cached a few articles, you can retrieve example sentences easily:
 
