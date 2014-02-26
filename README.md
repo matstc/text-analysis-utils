@@ -38,7 +38,7 @@ Want to practice vocabulary? Play fill-in-the-blanks:
 
 The file you pass in should contain a list of words, one per line.
 
-# Questions These Utils Are Meant To Answer
+## Questions That Now Have Answers
 
 ### How many vocabulary words do I know?
 
@@ -89,7 +89,7 @@ The file you pass in should contain a list of words, one per line.
     This is my uncle Bob.
     What a good uncle.
 
-# Overview of All The Utilities
+## Overview of All The Utilities
 
 ### readability-of
 Call this script on a piece of text to print out statistics like average sentence length or the Flesch-Kincaid grade level.
