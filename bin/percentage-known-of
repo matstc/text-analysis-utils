@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/vocabulary-chest'
+require 'colorize'
 
 def analyse text
 	words = text.split(" ")
@@ -14,8 +15,8 @@ def output options
 	size = known.size + unknown.size
 	
 	puts
-	puts "--"
-	puts "UNKNOWN WORDS: #{unknown.join(", ")}"
+  puts "—".blue
+	puts "#{'Unknown words'.red}: #{unknown.join(", ")}"
 	puts 
 	puts "Total number of unknown words: #{unknown.size}"
 	puts "Total number of known words: #{known.size}"
