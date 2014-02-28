@@ -1,4 +1,2 @@
-- delete proximity-of-words
-- handle options better
 - find a better way to test executables
 - figure out a way to really count vowels
