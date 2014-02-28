@@ -48,7 +48,7 @@ The file you pass in should contain a list of words, one per line.
 
     $ vocabulary-size
 
-    #= You known 432 words.
+    #= You know 432 words.
 
 ### What are the words I read most frequently?
 
