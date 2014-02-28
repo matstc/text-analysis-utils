@@ -3,11 +3,13 @@
 require_relative '../lib/vocabulary-chest'
 require 'colorize'
 
+@chest = VocabularyChest.new
+
 def analyse text
 	words = text.split(" ")
-	known = words.select{|w| VocabularyChest.is_known? w}
+	known = words.select{|w| @chest.is_known? w}
 	unknown = (words - known)
-	return [known.map{|w| VocabularyChest::sanitize w}.uniq, unknown.map{|w| VocabularyChest::sanitize w}.uniq]
+	return [known.map{|w| @chest.sanitize w}.uniq, unknown.map{|w| @chest.sanitize w}.uniq]
 end
 
 def output options

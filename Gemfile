@@ -4,3 +4,4 @@ ruby '2.0.0'
 gemspec
 
 gem 'rake'
+gem 'pry'

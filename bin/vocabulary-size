@@ -2,5 +2,5 @@
 
 require_relative '../lib/vocabulary-chest'
 
-size = VocabularyChest.known_words.size
+size = VocabularyChest.new.known_words.size
 puts "You know #{size} words."

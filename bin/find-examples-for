@@ -12,7 +12,7 @@ if !count_param.nil?
 end
 
 search = ARGV.join(" ")
-matches = DocumentCache.find_examples_for search, count
+matches = DocumentCache.new.find_examples_for search, count
 exit(1) if matches.empty?
 
 puts matches.map{|sentence, tokens|

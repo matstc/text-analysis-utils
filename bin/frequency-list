@@ -5,10 +5,13 @@
 require_relative '../lib/document-cache'
 require_relative '../lib/vocabulary-chest'
 
-def frequencies text=nil
-  text = DocumentCache::documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text} if text.nil?
+@cache = DocumentCache.new
+@chest = VocabularyChest.new
 
-  frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[VocabularyChest::stem(w)] << w; hash }
+def frequencies text=nil
+  text = @cache.documents.inject(""){|text, f| text+= File.open(f){|f|f.read}; text} if text.nil?
+
+  frequencies = text.split(" ").inject(Hash.new {|hash,key| hash[key] = []}){|hash, w| hash[@chest.stem(w)] << w; hash }
 
   frequencies = frequencies.sort{|a,b| a[1].size <=> b[1].size}.reverse
 end
@@ -19,7 +22,7 @@ def output frequencies
 end
 
 if ARGV[0] == "--unknown"
-	output frequencies.find_all{|k,v| !VocabularyChest::is_known?(v[0])}
+	output frequencies.find_all{|k,v| !@chest.is_known?(v[0])}
 elsif ARGV.empty?
 	output frequencies
 else

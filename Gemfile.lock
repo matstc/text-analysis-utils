@@ -12,11 +12,18 @@ GEM
   specs:
     amatch (0.2.11)
       tins (~> 0.3)
+    coderay (1.0.9)
     colorize (0.6.0)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
+    method_source (0.8.2)
+    pry (0.9.12.6)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     rake (10.1.1)
     ruby-stemmer (0.9.3)
+    slop (3.4.6)
     systemu (2.5.2)
     tins (0.13.1)
     uuid (2.3.7)
@@ -26,5 +33,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  pry
   rake
   text-analysis-utils!

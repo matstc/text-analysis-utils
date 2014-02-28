@@ -4,6 +4,8 @@ require_relative '../lib/document-cache'
 require_relative '../lib/vocabulary-chest'
 require_relative '../lib/game'
 
+@cache = DocumentCache.new
+
 def get_input
   if !ARGV.empty?
     File.open(ARGV[0]){|f| f.read}
@@ -14,14 +16,14 @@ end
 
 input = get_input
 words = input.split("\n")
-words.reject!{|w| STDOUT.write("."); STDOUT.flush; DocumentCache.find_examples_for(w).empty?}
+words.reject!{|w| STDOUT.write("."); STDOUT.flush; @cache.find_examples_for(w).empty?}
 puts
 
 puts "Playing with #{words.size} words."
 
 Game.new(words).play{ |word|
-  matches = DocumentCache.find_examples_for(word, 10).keys
+  matches = @cache.find_examples_for(word, 10).keys
   sentence = matches.sort{|a, b| a.size <=> b.size}.first
-  correct_answer = DocumentCache::extract_matching_words(word, sentence).first
+  correct_answer = @cache.extract_matching_words(word, sentence).first
   [sentence, correct_answer]
 }

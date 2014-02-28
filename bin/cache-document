@@ -12,4 +12,4 @@ def get_text
 	end
 end
 
-DocumentCache.add(get_text)
+DocumentCache.new.add(get_text)

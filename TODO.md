@@ -1,5 +1,5 @@
-- figure out a way to really count vowels
-- make document cache a real class
-- make vocabulary chest a real class
 - move TAU config parameters into appropriate classes
-- get rid of class level variables
+- handle options better
+- offer a --help and --version
+- find a better way to test executables
+- figure out a way to really count vowels
