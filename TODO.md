@@ -1,4 +1,3 @@
-- move TAU config parameters into appropriate classes
 - handle options better
 - offer a --help and --version
 - find a better way to test executables

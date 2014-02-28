@@ -9,7 +9,7 @@ class VocabularyChest
   def initialize
     @known_file = File.open(TAUConfig.known_file,'a')
     @unknown_file = File.open(TAUConfig.unknown_file,'a')
-    @stemmer= Lingua::Stemmer.new(:language => ENV['vocabulary_chest_language'] || "en")
+    @stemmer= Lingua::Stemmer.new(:language => TAUConfig.language)
   end
 
 	def known_words

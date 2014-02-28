@@ -6,6 +6,10 @@
 # How To Use
 When learning a language...
 
+If you're not learning English, set the language you are learning:
+
+    set-text-language <fr|de|es|...>
+
 Whenever you read a piece of text, cache it in your document cache:
 
     cache-document <file>
