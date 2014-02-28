@@ -4,7 +4,7 @@ require_relative '../lib/document-cache'
 require_relative '../lib/vocabulary-chest'
 require_relative '../lib/cli'
 
-TAU::CLI.intercept help: "Pass in a file to list the frequency of each word inside. Or call without argument to list the frequency for each word in your vocabulary chest based on the documents in your cache."
+TAU::CLI.intercept help: "Pass in a file to list the frequency of each word inside. Or call without argument to list the frequency for each word in your vocabulary chest based on the documents in your cache.\n\nYou can use the switch \"--unknown\" to only include unknown words (useful to figure out what to learn next)."
 
 @cache = DocumentCache.new
 @chest = VocabularyChest.new

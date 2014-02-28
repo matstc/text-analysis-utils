@@ -87,7 +87,7 @@ The file you pass in should contain a list of words, one per line.
 
 ### How is this word used in an example sentence?
 
-    $ find-examples-of --2 uncle
+    $ find-examples-of -2 uncle
 
     #=
     This is my uncle Bob.

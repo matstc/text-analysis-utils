@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.add_dependency('ruby-stemmer')
   s.add_dependency('uuid')
   s.author = "@matstc"
-  s.summary = %q{Utilities to help language learners}
-  s.description = %q{Utilities to help language learners}
+  s.summary = %q{Utilities to help language learners acquire vocabulary}
+  s.description = %q{Utilities to help language learners acquire vocabulary}
   s.homepage = %q{http://github.com/matstc/text-analysis-utils}
   s.files = Dir["lib/*"]
   s.executables += Dir["bin/*"].map{|path|path.sub(/^bin\//,"")}

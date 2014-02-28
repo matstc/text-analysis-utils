@@ -2,6 +2,8 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require_relative '../spec_helper'
 
+require_relative '../../lib/document-cache'
+
 describe "find-examples-for" do
   before do
     @stdout = mock_stdout
@@ -22,7 +24,7 @@ describe "find-examples-for" do
 
     ARGV[0] = "lion"
     load './bin/find-examples-for'
-    @stdout.content.must_match /the .*lion.* is king./
+    @stdout.content.must_match(/the .*lion.* is king./)
   end
 
   it "serves two examples" do
@@ -30,7 +32,7 @@ describe "find-examples-for" do
     @cache.add "the lion is strong"
     @cache.add "the lion is awesome"
 
-    ARGV[0] = "--3"
+    ARGV[0] = "-3"
     ARGV[1] = "lion"
     load './bin/find-examples-for'
     @stdout.content.split("\n").length.must_equal 3

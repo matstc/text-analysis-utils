@@ -5,12 +5,12 @@ require 'colorize'
 require_relative '../lib/document-cache'
 require_relative '../lib/cli'
 
-TAU::CLI.intercept help: "Pass in a word in argument to find examples of usage from your document cache."
+TAU::CLI.intercept help: "Pass in a word in argument to retrieve example sentences using that word from your document cache.\n\nYou can use the switch \"-N\" to retrieve N examples."
 
 count = 1
-count_param = ARGV.find{|a| (a =~ /--\d*/) == 0}
+count_param = ARGV.find{|a| (a =~ /^-\d*$/) == 0}
 if !count_param.nil?
-  count = count_param.sub("--","").to_i
+  count = count_param.sub("-","").to_i
   ARGV.reject!{|a| a == count_param}
 end
 

@@ -1,4 +1,4 @@
+- delete proximity-of-words
 - handle options better
-- offer a --help and --version
 - find a better way to test executables
 - figure out a way to really count vowels
