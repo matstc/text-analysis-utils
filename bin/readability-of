@@ -2,7 +2,7 @@
 require_relative '../lib/algorithms'
 require_relative '../lib/cli'
 
-TAU::CLI.intercept help: "Pass in a file to calculate how readable is the content. Or just call without argument and paste a bit of text. Use Control-D when you are done pasting."
+TAU::CLI.intercept help: "Pass in a file to calculate how readable is its content. Or just call with no arguments and paste a bit of text. Use Control-D when you are done pasting."
 
 def analyse text
 	words = text.split(" ").size.to_f

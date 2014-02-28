@@ -4,7 +4,7 @@ require_relative '../lib/vocabulary-chest'
 require 'colorize'
 require_relative '../lib/cli'
 
-TAU::CLI.intercept help: "Pass in a file to calculate how much vocabulary you know from its content. Or do not pass in any argument and paste a bit of text. Use Control-D when you are done pasting."
+TAU::CLI.intercept help: "Pass in a file to calculate how much vocabulary you know from its content. Or do not pass in any arguments and paste a bit of text. Use Control-D when you are done pasting."
 
 @chest = VocabularyChest.new
 

@@ -5,7 +5,7 @@ require_relative '../lib/vocabulary-chest'
 require_relative '../lib/game'
 require_relative '../lib/cli'
 
-TAU::CLI.intercept help: "This script is used to play fill-in-the-blanks using example sentences from your document cache.\n\nPass in a file with a word on each line. Or just call without arguments to paste text, one word per line. Use Control-D when you are done pasting."
+TAU::CLI.intercept help: "This script is used to play fill-in-the-blanks using example sentences from your document cache.\n\nPass in a file with a word on each line. Or just call with no arguments to paste text, one word per line. Use Control-D when you are done pasting."
 
 
 @cache = DocumentCache.new
