@@ -113,11 +113,6 @@ This script will output example sentences taken from the document cache.
 ### play-with-examples
 This scripts accepts a list of words to practice and will prompt the user to complete sentences taken from the document cache.
 
-### proximity-of-words
-Call this utility with a first file to analyse, and an arbitrary number of other files containing known words.
-
-For each word in the first file, this script will output the closest word found in all the other files, and the Levensthein distance between the two.
-
 ### vocabulary-size
 Counts the number of known words.
 
