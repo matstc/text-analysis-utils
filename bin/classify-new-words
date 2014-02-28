@@ -4,6 +4,9 @@ require 'rubygems'
 require 'colorize'
 require_relative '../lib/vocabulary-chest'
 require_relative '../lib/document-cache'
+require_relative '../lib/cli'
+
+TAU::CLI.intercept help: "Pass in file names in argument to classify their content. Or call this script without arguments to paste words to classify. Use Control-D when you are done pasting."
 
 def get_text
 	if !ARGV.empty?

@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-# Call with a file to list words by the frequency of their stems
-# Call with no arguments to list the frequencies of the words in the vocabulary chest.
 
 require_relative '../lib/document-cache'
 require_relative '../lib/vocabulary-chest'
+require_relative '../lib/cli'
+
+TAU::CLI.intercept help: "Pass in a file to list the frequency of each word inside. Or call without argument to list the frequency for each word in your vocabulary chest based on the documents in your cache."
 
 @cache = DocumentCache.new
 @chest = VocabularyChest.new

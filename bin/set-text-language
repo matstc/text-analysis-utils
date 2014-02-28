@@ -1,6 +1,12 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/tau_config'
+require_relative '../lib/cli'
 
-(puts "Specify the language as the first argument (en/fr/de/es/...)"; exit 1) if ARGV.empty?
+help = "Pass in one argument: the language you are currently learning (fr|de|es|en|...)"
+
+TAU::CLI.intercept help: help
+
+(puts help; exit 1) if ARGV.empty?
+
 TAUConfig.language = ARGV[0] 

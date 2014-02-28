@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/vocabulary-chest'
+require_relative '../lib/cli'
+
+TAU::CLI.intercept
 
 size = VocabularyChest.new.known_words.size
+
 puts "You know #{size} words."

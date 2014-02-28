@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
+require_relative '../lib/cli'
 require_relative '../lib/document-cache'
+
+TAU::CLI.intercept help: "Pass in file names in argument to cache their contents. Or call this script without arguments to paste text. Use Control-D when you are done pasting."
 
 def get_text
 	if ARGV.empty?

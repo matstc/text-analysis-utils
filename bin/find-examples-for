@@ -3,6 +3,9 @@
 require 'rubygems'
 require 'colorize'
 require_relative '../lib/document-cache'
+require_relative '../lib/cli'
+
+TAU::CLI.intercept help: "Pass in a word in argument to find examples of usage from your document cache."
 
 count = 1
 count_param = ARGV.find{|a| (a =~ /--\d*/) == 0}

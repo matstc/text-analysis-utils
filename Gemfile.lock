@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    text-analysis-utils (0.5.0)
+    text-analysis-utils (0.6)
       amatch
       colorize
       ruby-stemmer

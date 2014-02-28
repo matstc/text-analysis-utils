@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'amatch'
+require_relative '../lib/cli'
+
+TAU::CLI.intercept
 
 def distance w1, w2
 	Amatch::Levenshtein.new(w1).match(w2)
